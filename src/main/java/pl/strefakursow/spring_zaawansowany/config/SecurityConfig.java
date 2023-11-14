@@ -3,22 +3,27 @@ package pl.strefakursow.spring_zaawansowany.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import pl.strefakursow.spring_zaawansowany.component.CustomDaoAuthenticationProvider;
+import pl.strefakursow.spring_zaawansowany.service.implementation.JpaUserDetailSerice;
 
 
 @Configuration
 @EnableWebSecurity(debug = false)
 public class SecurityConfig {
 
-    AuthenticationProvider authenticationProvider;
+    JpaUserDetailSerice userDetailService;
+
+    CustomDaoAuthenticationProvider authenticationProvider;
 
     @Autowired
-    public SecurityConfig(AuthenticationProvider authenticationProvider) {
+    public SecurityConfig(JpaUserDetailSerice userDetailService, CustomDaoAuthenticationProvider authenticationProvider) {
+        this.userDetailService = userDetailService;
         this.authenticationProvider = authenticationProvider;
     }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
