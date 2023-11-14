@@ -1,6 +1,5 @@
 package pl.strefakursow.spring_zaawansowany.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.strefakursow.spring_zaawansowany.entity.Item;
 import pl.strefakursow.spring_zaawansowany.service.ItemService;
+import pl.strefakursow.spring_zaawansowany.service.implementation.MailSenderServiceImplementation;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +17,9 @@ import java.util.Optional;
 public class MainController {
 
     private static final int PAGE_SIZE = 3;
+
+    @Autowired
+    private MailSenderServiceImplementation mailSenderService;
 
     @Autowired
     ItemService itemService;
@@ -51,6 +54,12 @@ public class MainController {
 
         return pages.getContent();
 
+    }
+
+    @RequestMapping("/send_mail")
+    public String sendMail() {
+        mailSenderService.sendNewMail("ratunek.m.s.p@gmail.com", "Test", "Test Message");
+        return "Mail sent!";
     }
 
 
