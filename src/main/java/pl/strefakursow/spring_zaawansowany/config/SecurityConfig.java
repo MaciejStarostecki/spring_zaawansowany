@@ -6,9 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import pl.strefakursow.spring_zaawansowany.component.CustomDaoAuthenticationProvider;
 import pl.strefakursow.spring_zaawansowany.service.implementation.JpaUserDetailSerice;
 
 
@@ -27,16 +28,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                    .authorizeRequests()
-                    .requestMatchers(AntPathRequestMatcher.antMatcher("/login")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher.antMatcher("/webjars/**")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher.antMatcher("/sing_up")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher.antMatcher("/admin_panel")).hasAuthority("ADMIN")
-                    .anyRequest().authenticated()
-                    .and()
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/login", "/sign_up", "/").permitAll()
+                        .requestMatchers("/webjars/**").permitAll()
+                        .requestMatchers("/admin_panel").hasAuthority("ADMIN")
+                        .anyRequest().authenticated()
+                )
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/user_panel", true)
+                        .permitAll()
                 )
                 .logout((logout) -> logout
                         .permitAll()
