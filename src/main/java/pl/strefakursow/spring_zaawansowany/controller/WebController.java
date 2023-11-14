@@ -27,4 +27,5 @@ public class WebController {
         modelAndView.setViewName("admin_panel");
         return modelAndView;
     }
+
 }
