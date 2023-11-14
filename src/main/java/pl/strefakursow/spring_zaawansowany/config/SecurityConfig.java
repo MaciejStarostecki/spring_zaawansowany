@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import pl.strefakursow.spring_zaawansowany.component.CustomDaoAuthenticationProvider;
 import pl.strefakursow.spring_zaawansowany.service.implementation.JpaUserDetailSerice;
@@ -16,12 +19,9 @@ public class SecurityConfig {
 
     JpaUserDetailSerice userDetailService;
 
-    CustomDaoAuthenticationProvider authenticationProvider;
-
     @Autowired
-    public SecurityConfig(JpaUserDetailSerice userDetailService, CustomDaoAuthenticationProvider authenticationProvider) {
+    public SecurityConfig(JpaUserDetailSerice userDetailService) {
         this.userDetailService = userDetailService;
-        this.authenticationProvider = authenticationProvider;
     }
 
 
@@ -49,6 +49,10 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }
 

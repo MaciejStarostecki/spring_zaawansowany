@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -18,10 +19,12 @@ public class CustomDaoAuthenticationProvider implements AuthenticationProvider {
     private static final String CREDENTIALS_CANNOT_BE_NULL = "Credentials cannot be null.";
     public static final String INCORRECT_PASSWORD = "Incorrect password.";
     private UserDetailsService userDetailsService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CustomDaoAuthenticationProvider(UserDetailsService userDetailsService) {
+    public CustomDaoAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -39,7 +42,9 @@ public class CustomDaoAuthenticationProvider implements AuthenticationProvider {
         String password = credentials.toString();
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if (!password.equals(userDetails.getPassword())) {
+        boolean passwordMatch = passwordEncoder.matches(password, userDetails.getPassword());
+
+        if (!passwordMatch) {
             throw new BadCredentialsException(INCORRECT_PASSWORD);
         }
 
