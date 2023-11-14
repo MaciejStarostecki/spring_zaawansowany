@@ -13,7 +13,9 @@
                     <a class="nav-link" href="/admin_panel">Admin Panel</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" class="nav-link" value="Logout"/>
+                    </form>
                 </li>
                 <!--                <li class="nav-item">-->
                 <!--                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
