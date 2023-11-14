@@ -58,7 +58,7 @@ public class MainController {
 
     @RequestMapping("/send_mail")
     public String sendMail() {
-        mailSenderService.sendNewMail("ratunek.m.s.p@gmail.com", "Test", "Test Message");
+        mailSenderService.sendNewMail("maciejstarostecki@gmail.com", "Test", "Test Message");
         return "Mail sent!";
     }
 

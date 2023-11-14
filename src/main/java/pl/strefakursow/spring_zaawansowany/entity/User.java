@@ -24,6 +24,8 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private String email;
+    private String confirmationToken;
+    private boolean enabled = false;
 
 
     @Override

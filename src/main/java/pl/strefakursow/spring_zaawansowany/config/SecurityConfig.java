@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import pl.strefakursow.spring_zaawansowany.component.CustomDaoAuthenticationProvider;
 import pl.strefakursow.spring_zaawansowany.service.implementation.JpaUserDetailSerice;
 
@@ -29,10 +30,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/login", "/sign_up", "/").permitAll()
+                        .requestMatchers("/", "/login", "/sign_up", "/confirm_email").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/admin_panel").hasAuthority("ADMIN")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
