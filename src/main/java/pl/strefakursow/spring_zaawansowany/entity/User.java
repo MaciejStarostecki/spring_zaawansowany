@@ -1,17 +1,17 @@
 package pl.strefakursow.spring_zaawansowany.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -27,11 +27,14 @@ public class User implements UserDetails {
     private String confirmationToken;
     private boolean enabled = false;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_role"))
+    Set<Role> roles;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO implementacja metody
-        return null;
+        return roles.stream().map(x -> new SimpleGrantedAuthority(x.getName())).collect(Collectors.toSet());
     }
 
     @Override
@@ -61,8 +64,9 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled  ;
     }
+
 }
 
 

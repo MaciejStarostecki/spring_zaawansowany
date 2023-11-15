@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.strefakursow.spring_zaawansowany.entity.Item;
+import pl.strefakursow.spring_zaawansowany.entity.User;
+import pl.strefakursow.spring_zaawansowany.repository.UserRepository;
 import pl.strefakursow.spring_zaawansowany.service.ItemService;
 import pl.strefakursow.spring_zaawansowany.service.implementation.MailSenderServiceImplementation;
 
@@ -22,7 +24,10 @@ public class MainController {
     private MailSenderServiceImplementation mailSenderService;
 
     @Autowired
-    ItemService itemService;
+    private ItemService itemService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @RequestMapping("/")
     public List<Item> index() {
@@ -60,6 +65,20 @@ public class MainController {
     public String sendMail() {
         mailSenderService.sendNewMail("maciejstarostecki@gmail.com", "Test", "Test Message");
         return "Mail sent!";
+    }
+
+    @RequestMapping("/confirm_email")
+    public String confirmEmail(@RequestParam(name = "token") String token) {
+        Optional<User> optionalUser = userRepository.findByConfirmationToken(token);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setEnabled(true);
+            userRepository.save(user);
+
+            return "Your account has been activated!";
+        }
+        else return "Given token does not exist!";
+
     }
 
 

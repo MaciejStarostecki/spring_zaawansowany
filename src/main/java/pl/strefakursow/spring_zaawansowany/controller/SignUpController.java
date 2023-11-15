@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import pl.strefakursow.spring_zaawansowany.component.RandomStringFactory;
 import pl.strefakursow.spring_zaawansowany.component.SignUpMailer;
+import pl.strefakursow.spring_zaawansowany.entity.Role;
 import pl.strefakursow.spring_zaawansowany.entity.User;
+import pl.strefakursow.spring_zaawansowany.repository.RoleRepository;
 import pl.strefakursow.spring_zaawansowany.repository.UserRepository;
 import pl.strefakursow.spring_zaawansowany.service.SignUpService;
 
@@ -20,13 +22,13 @@ public class SignUpController {
 
     private SignUpMailer signUpMailer;
 
-    private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    public SignUpController(SignUpService signUpService, SignUpMailer signUpMailer, UserRepository userRepository) {
+    public SignUpController(SignUpService signUpService, SignUpMailer signUpMailer,     RoleRepository roleRepository) {
         this.signUpService = signUpService;
         this.signUpMailer = signUpMailer;
-        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping(value = "/sign_up")
@@ -40,6 +42,7 @@ public class SignUpController {
         System.out.println("email: " + email);
         modelAndView.setViewName("redirect:/login");
         String token = RandomStringFactory.getRandomString(TOKEN_LENGTH);
+
         signUpService.signUpUser(User.builder()
                         .username(username)
                         .password(password)
@@ -49,20 +52,5 @@ public class SignUpController {
         signUpMailer.sendConfirmationLink(email, token);
         return modelAndView;
     }
-
-    @RequestMapping("/confirm_email")
-    public String confirmEmail(@RequestParam(name = "token") String token) {
-        Optional<User> optionalUser = userRepository.findByConfirmationToken(token);
-        if(optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setEnabled(true);
-            userRepository.save(user);
-
-            return "Your account has been activated!";
-        }
-        else return "Given token does not exist!";
-
-    }
-
 
 }
